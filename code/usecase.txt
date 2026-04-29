@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+skinparam nodesep 20
+skinparam ranksep 50
+skinparam usecase {
+    BackgroundColor #E6E6FA
+    BorderColor #555555
+}
+
+actor "Користувач" as user
+actor "Опонент" as opponent
+actor "Адміністратор" as admin
+actor "Зовнішній API\nаутентифікації" as api
+
+rectangle "Система E-Kahoot\nз розширеними функціями" #FFFFDD {
+    usecase "Перегляд стрічки\nфактів [ФВ-01]" as uc1
+    usecase "Створити вікторину" as uc_create
+    usecase "Керувати ігровою\nкімнатою" as uc_manage
+    
+    usecase "Проходження\nмиттєвого квізу\n[ФВ-02]" as uc2
+    usecase "Нарахування балів\n[ФВ-03]" as uc3
+    
+    usecase "Участь у режимі \"батл\"\n[ФВ-06]" as uc6
+    usecase "Управління\nпрофілем\n[ФВ-04]" as uc4
+    
+    usecase "Авторизація в\nсистемі\n[ФВ-05]" as uc5
+    usecase "Перегляд таблиці\nлідерів\n[ФВ-04/06]" as uc_leaderboard
+    usecase "Використання\nсоціальних функцій\n[ФВ-07]" as uc7
+}
+
+' Привязки акторов (API жестко выносим вправо обратной стрелкой)
+user --> uc1
+user --> uc2
+user --> uc6
+user --> uc4
+user --> uc7
+
+opponent --> uc6
+
+admin --> uc_manage
+admin --> uc_create
+
+uc5 <-- api
+
+' Внутренние связи
+uc2 ..> uc5 : <<include>>
+uc6 ..> uc5 : <<include>>
+
+uc2 ..> uc3 : <<include>>
+uc6 ..> uc3 : <<include>>
+
+uc6 ..> uc4 : <<extend>>
+uc4 .. uc_leaderboard
+
+' Невидимые линии (хак для выравнивания по вертикали)
+uc1 -[hidden]down- uc2
+uc2 -[hidden]down- uc6
+uc6 -[hidden]down- uc4
+uc4 -[hidden]down- uc7
+
+uc_create -[hidden]down- uc_manage
+uc_manage -[hidden]down- uc5
+@enduml
