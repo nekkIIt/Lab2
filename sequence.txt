@@ -1,0 +1,35 @@
+@startuml
+skinparam {
+    BackgroundColor transparent
+    ParticipantBackgroundColor #E6E6FA
+    ParticipantBorderColor #555555
+    ActorBackgroundColor #E6E6FA
+    ActorBorderColor #555555
+}
+
+actor Гравець as player
+participant ":GameSession" as session
+participant ":Question" as question
+participant ":Result" as result
+
+player -> session : submitAnswer(answerIndex, time)
+activate session
+
+session -> question : validateAnswer(answerIndex)
+activate question
+question --> session : isCorrect: bool
+deactivate question
+
+alt isCorrect == true
+    session -> result : calculatePoints(time)
+    activate result
+    result --> session : scoreEarned
+    deactivate result
+else isCorrect == false
+    session -> session : score = 0
+end
+
+session --> player : displayFeedback(score)
+deactivate session
+
+@enduml
